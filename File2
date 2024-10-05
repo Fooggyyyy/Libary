@@ -1,0 +1,109 @@
+### Углубленная структура классов для расширенной системы управления библиотекой:
+
+#### 1. Абстрактный класс `Media` (для всех медиа):
+- **Поля**:
+  - `private string _title;` — Название медиа
+  - `private string _author;` — Автор
+  - `private int _year;` — Год выпуска
+  - `private bool _isAvailable;` — Доступность для выдачи
+
+- **Свойства**:
+  - `public string Title { get => _title; set => _title = value; }`
+  - `public string Author { get => _author; set => _author = value; }`
+  - `public int Year { get => _year; set => _year = value; }`
+  - `public bool IsAvailable { get => _isAvailable; set => _isAvailable = value; }`
+
+- **Методы**:
+  - `public abstract void DisplayInfo();` — Абстрактный метод для отображения информации о медиа
+  - `public virtual void Borrow();` — Метод для взятия медиа
+  - `public virtual void Return();` — Метод для возврата медиа
+
+#### 2. Интерфейс `IBorrowable`:
+- **Методы**:
+  - `void Borrow();`
+  - `void Return();`
+  - `bool IsOverdue();` — Проверка, просрочено ли медиа
+
+#### 3. Класс `Book` (наследник `Media`):
+- **Поля**:
+  - `private int _pages;` — Количество страниц
+
+- **Свойства**:
+  - `public int Pages { get => _pages; set => _pages = value; }`
+
+- **Методы**:
+  - `public override void DisplayInfo();` — Переопределенный метод для отображения информации о книге
+  - `public override void Borrow();` — Переопределение метода взятия книги
+  - `public override void Return();` — Переопределение метода возврата книги
+
+#### 4. Класс `Film` (наследник `Media`):
+- **Поля**:
+  - `private int _duration;` — Длительность в минутах
+
+- **Свойства**:
+  - `public int Duration { get => _duration; set => _duration = value; }`
+
+- **Методы**:
+  - `public override void DisplayInfo();` — Переопределенный метод для отображения информации о фильме
+  - `public override void Borrow();` — Переопределение метода взятия фильма
+  - `public override void Return();` — Переопределение метода возврата фильма
+
+#### 5. Класс `Magazine` (наследник `Media`):
+- **Поля**:
+  - `private int _issueNumber;` — Номер выпуска
+
+- **Свойства**:
+  - `public int IssueNumber { get => _issueNumber; set => _issueNumber = value; }`
+
+- **Методы**:
+  - `public override void DisplayInfo();` — Переопределенный метод для отображения информации о журнале
+  - `public override void Borrow();` — Переопределение метода взятия журнала
+  - `public override void Return();` — Переопределение метода возврата журнала
+
+#### 6. Класс `User`:
+- **Поля**:
+  - `private string _name;` — Имя пользователя
+  - `private List<Media> _borrowedItems;` — Список выданных медиа
+  - `private int _borrowLimit = 5;` — Лимит по количеству взятых медиа
+
+- **Свойства**:
+  - `public string Name { get => _name; set => _name = value; }`
+  - `public List<Media> BorrowedItems { get => _borrowedItems; }`
+
+- **Методы**:
+  - `public void BorrowItem(Media item);` — Метод для взятия медиа
+  - `public void ReturnItem(Media item);` — Метод для возврата медиа
+  - `public List<Media> GetOverdueItems();` — Метод для получения списка просроченных медиа
+
+#### 7. Класс `LibrarySystem` (Singleton):
+- **Поля**:
+  - `private static LibrarySystem _instance;` — Экземпляр класса
+  - `private List<Media> _mediaCollection;` — Коллекция всех медиа
+  - `private List<User> _users;` — Список пользователей
+
+- **Свойства**:
+  - `public static LibrarySystem Instance { get { if (_instance == null) _instance = new LibrarySystem(); return _instance; } }`
+  - `public List<Media> MediaCollection { get => _mediaCollection; }`
+  - `public List<User> Users { get => _users; }`
+
+- **Методы**:
+  - `public void AddMedia(Media media);` — Метод для добавления нового медиа в библиотеку
+  - `public void RegisterUser(User user);` — Метод для регистрации нового пользователя
+  - `public List<Media> SearchMedia(Func<Media, bool> criteria);` — Поиск медиа по различным критериям с использованием лямбд
+  - `public List<Media> SortMedia(Comparison<Media> comparison);` — Сортировка медиа по заданному критерию
+  - `public void GenerateReport();` — Генерация отчета по выданным и просроченным медиа
+
+#### 8. Класс `Report` (для отчетности):
+- **Методы**:
+  - `public List<Media> GenerateBorrowedItemsReport();` — Список всех выданных медиа
+  - `public List<Media> GenerateOverdueItemsReport();` — Список всех просроченных медиа
+  - `public List<Media> GeneratePopularItemsReport();` — Список популярных медиа на основе выданных
+
+#### 9. Шаблоны проектирования:
+- **Одиночка (Singleton)**: Класс `LibrarySystem` для управления библиотекой.
+- **Фабричный метод**: Создание разных типов медиа (книга, фильм, журнал).
+
+#### 10. Хранение данных (сериализация/десериализация):
+- **Методы**:
+  - `public void SaveToFile(string filePath);` — Сохранение данных в файл (JSON/XML)
+  - `public void LoadFromFile(string filePath);` — Загрузка данных из файла
