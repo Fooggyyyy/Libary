@@ -1,0 +1,7 @@
+.target/
+.output/ 
+.release/
+.debug/
+.vs/
+*.vsidx
+*.log
