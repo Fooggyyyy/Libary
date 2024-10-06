@@ -18,12 +18,6 @@
   - `public virtual void Borrow();` — Метод для взятия медиа
   - `public virtual void Return();` — Метод для возврата медиа
 
-#### 2. Интерфейс `IBorrowable`:
-- **Методы**:
-  - `void Borrow();`
-  - `void Return();`
-  - `bool IsOverdue();` — Проверка, просрочено ли медиа
-
 #### 3. Класс `Book` (наследник `Media`):
 - **Поля**:
   - `private int _pages;` — Количество страниц
