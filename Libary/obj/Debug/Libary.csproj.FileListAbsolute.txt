@@ -1,0 +1,7 @@
+C:\Users\user\Source\Repos\Libary\Libary\obj\Debug\Libary.csproj.AssemblyReference.cache
+C:\Users\user\Source\Repos\Libary\Libary\obj\Debug\Libary.csproj.CoreCompileInputs.cache
+C:\Users\user\Source\Repos\Libary\Libary\bin\Debug\Libary.exe.config
+C:\Users\user\Source\Repos\Libary\Libary\bin\Debug\Libary.exe
+C:\Users\user\Source\Repos\Libary\Libary\bin\Debug\Libary.pdb
+C:\Users\user\Source\Repos\Libary\Libary\obj\Debug\Libary.exe
+C:\Users\user\Source\Repos\Libary\Libary\obj\Debug\Libary.pdb
