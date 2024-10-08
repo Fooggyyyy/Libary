@@ -5,9 +5,37 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+
 
 namespace Libary
 {
+    interface IIdentifiable //Для уникального ID для каждого медиа
+    {
+        int UnId();
+    }
+
+    interface ISerializable //Сохранение всех Media и User-ов в txt-файл
+    {
+        void SaveToFile(string filename);
+    }
+
+    interface IReportable //Для реализации отчетов
+    {
+        List<Media> SearchMedia(Func<Media, bool> criteria);
+    }
+
+    interface IPenaltyApplicable //Для реализации штрафов за просрочку
+    {
+        int Penalty(Media media);
+    }
+
+    interface INotifiable //Для напоминания о скорой просрочке
+    {
+        void Notifiable(Media media);
+    }
+
+
     abstract class Media //Абстрактный класс с Media, для выделения общих характерестик медиа.
     {
         //Поля
@@ -270,16 +298,45 @@ namespace Libary
 
     sealed class LibrarySystem //Основной класс для взаимодействия с пользователем и работы системы.
     {
-        private static LibrarySystem _instance; //Экземпляр класса
+        //Для создания единственного экземпляра
+        private static LibrarySystem _instance; // Единственный экземпляр
+        private static readonly object _lock = new object(); // Для обеспечения потокобезопасности
+
+        // Статический метод для получения единственного экземпляра класса
+        public static LibrarySystem GetInstance()
+        {
+            if (_instance == null)
+            {
+                lock (_lock) // Потокобезопасная инициализация
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new LibrarySystem();
+                    }
+                }
+            }
+            return _instance;
+        }
+        //-----------------------------------------------------------------
+
         private List<Media> _mediaCollection; //Коллекция всех медиа
         private List<User> _users; //Список пользователей
 
-
-        public static LibrarySystem Instance { get { if (_instance == null) _instance = new LibrarySystem(); return _instance; } }
         public List<Media> MediaCollection { get => _mediaCollection; }
         public List<User> Users { get => _users; }
 
-  
+        private LibrarySystem()
+        {
+            _mediaCollection = new List<Media>();
+            _users = new List<User>();
+        }
+
+        private LibrarySystem(List<Media> _mediaCollection, List<User> _users)
+        {
+            this._mediaCollection = _mediaCollection;
+            this._users = _users;
+        }
+
         public void AddMedia(Media media) //Метод для добавления нового медиа в библиотеку
         {
             _mediaCollection.Add(media);
@@ -288,45 +345,26 @@ namespace Libary
         {
             _users.Add(user);
         }
-
-        //С ЭТОГО МОМЕНТА ПРОДОЛЖАЕМ!!!
         public List<Media> SearchMedia(Func<Media, bool> criteria) //Поиск медиа по различным критериям с использованием лямбд
         {
-            return _mediaCollection;
+            return _mediaCollection.Where(criteria).ToList();
         }
         public List<Media> SortMedia(Comparison<Media> comparison) //Сортировка медиа по заданному критерию
         {
-            return _mediaCollection;
+            var sortedList = _mediaCollection.ToList();
+            sortedList.Sort(comparison);
+            return sortedList;
         }
         public void GenerateReport() //Генерация отчета по выданным и просроченным медиа
         {
-           
-        }
-    }
+            Console.WriteLine("Все выданные медиа: ");
+            foreach (Media media in _mediaCollection)
+                media.DisplayInfo();
 
-    //------------------------------------------------------
-
-    class Report //Класс для отчетности по всей библиотеке
-    {
-        public List<Media> GenerateBorrowedItemsReport() // Список всех выданных медиа
-        {
-            return new List<Media>();
-        }
-        public List<Media> GenerateOverdueItemsReport() // Список всех просроченных медиа
-        {
-            return new List<Media>();
-        }
-        public List<Media> GeneratePopularItemsReport() // Список популярных медиа на основе выданных
-        {
-            return new List<Media>();
-        }
-        public void SaveToFile(string filePath) // Сохранение данных в файл(JSON/XML)
-        {
-
-        }
-        public void LoadFromFile(string filePath) // Загрузка данных из файла
-        {
-
+            Console.WriteLine("Просроченные медиа: ");
+            foreach (Media media in _mediaCollection)
+                if (media.IsOverdue())
+                    media.DisplayInfo();
         }
     }
 
